@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 # Vars
 rg=""
 pubkey=""
@@ -7,32 +7,6 @@ location="uksouth"
 spusername=""
 sppassword=""
 sptenant=""
-
-# If the variables are unset, prompt the user for them
-if [ -z "$rg" ]; then
-    echo "Enter the resource group name:"
-    read rg
-fi
-
-if [ -z "$pubkey" ]; then
-    echo "Enter the public key:"
-    read pubkey
-fi
-
-if [ -z "$spusername" ]; then
-    echo "Enter the service principal username:"
-    read spusername
-fi
-
-if [ -z "$sppassword" ]; then
-    echo "Enter the service principal password:"
-    read sppassword
-fi
-
-if [ -z "$sptenant" ]; then
-    echo "Enter the service principal tenant:"
-    read sptenant
-fi
 
 # Login to Azure
 
