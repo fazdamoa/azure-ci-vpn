@@ -1,18 +1,46 @@
 #!/bin/bash
 
 # Vars
-rg=ftbvpn
-pubkey=''
+rg=""
+pubkey=""
 location="uksouth"
 spusername=""
 sppassword=""
 sptenant=""
 
+# If the variables are unset, prompt the user for them
+if [ -z "$rg" ]; then
+    echo "Enter the resource group name:"
+    read rg
+fi
+
+if [ -z "$pubkey" ]; then
+    echo "Enter the public key:"
+    read pubkey
+fi
+
+if [ -z "$spusername" ]; then
+    echo "Enter the service principal username:"
+    read spusername
+fi
+
+if [ -z "$sppassword" ]; then
+    echo "Enter the service principal password:"
+    read sppassword
+fi
+
+if [ -z "$sptenant" ]; then
+    echo "Enter the service principal tenant:"
+    read sptenant
+fi
+
+# Login to Azure
+
 echo "Logging in to Azure..."
 echo ""
 
 source ./creds.txt
-az login --service-principal --username $spuser --password $sppassword --tenant $sptenant
+az login --service-principal --username $spusername --password $sppassword --tenant $sptenant
 
 echo "Creating SSH Container..."
 echo ""
@@ -28,7 +56,7 @@ az container create --resource-group $rg \
     --environment-variables 'name'='openssh-server' 'hostname'='openssh-server' 'USER_NAME'='sshuser' 'SUDO_ACCESS'='true' 'PUBLIC_KEY'="$pubkey"
 
 echo "Waiting for container to accept connections..."
-sleep 20
+sleep 45
 
 echo "You are now SSHing to the container."
 echo "Press ctrl + c ONCE to exit and delete"
