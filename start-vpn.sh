@@ -19,15 +19,16 @@ az login --service-principal --username $spusername --password $sppassword --ten
 echo "Creating SSH Container..."
 echo ""
 
+# create random guid
+url_guid=$(uuidgen)
+
 az container create --resource-group $rg \
     --name $rg \
     --image fazdamoa/ftbvpn:v1 \
-    --restart-policy OnFailure \
     --ports 2222 \
-    --dns-name-label $rg \
+    --dns-name-label $url_guid \
     --memory 0.5 \
-    --location $location \
-    --environment-variables 'name'='openssh-server' 'hostname'='openssh-server' 'USER_NAME'='sshuser' 'SUDO_ACCESS'='true' 'PUBLIC_KEY'="$pubkey"
+    --environment-variables 'name'='openssh-server' 'hostname'='openssh-server' 'USER_NAME'='sshuser' 'SUDO_ACCESS'='true' PUBLIC_KEY="$pubkey"
 
 echo "Waiting for container to accept connections..."
 sleep 45
@@ -35,7 +36,7 @@ sleep 45
 echo "You are now SSHing to the container."
 echo "Press ctrl + c ONCE to exit and delete"
 
-ssh -D 3128 -oStrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q -C -p 2222 -N  sshuser@${rg}.${location}.azurecontainer.io
+ssh -D 3128 -oStrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q -C -p 2222 -N  sshuser@${url_guid}.${location}.azurecontainer.io
 
 wait $!
 
